@@ -156,7 +156,28 @@ XTrain, XVal, yTrain, yVal = train_test_split(XTrain, yTrain, test_size=0.2,rand
 XTrain.shape, XVal.shape, yTrain.shape, yVal.shape, XTest.shape, yTest.shape  # printing shapes of train, validation and test data        
 
 vectorizer = CountVectorizer(stop_words='english',ngram_range=(1,2),min_df=5).fit(covid.Corpus)  # setting vectorizer
- 
+
+# The CountVectorizer is utilized here to convert the text corpus into a sparse matrix of token counts.
+# This transformation is essential for preparing the text data for machine learning algorithms which
+# require numerical input data.
+
+# Parameters used in CountVectorizer:
+
+# - stop_words: 'english' is specified to remove common English words ('the', 'a', etc.) that do not
+#   carry much meaning and are not useful for distinguishing between texts.
+# - ngram_range: (1, 2) indicates that both unigrams (single words) and bigrams (pairs of consecutive words)
+#   will be considered. This can capture phrases and multi-word expressions which might be important for
+#   understanding the sentiment.
+# - min_df: 5 specifies that the vocabulary will only include terms that appear in at least five documents.
+#   This helps to focus on words that are more likely to be relevant and avoids overfitting to very rare terms.
+
+# The fit method of CountVectorizer learns the vocabulary dictionary and the transform method converts the text
+# documents into a document-term matrix. This matrix has rows corresponding to the documents and columns
+# corresponding to the terms, with cell values being the term frequencies in the documents.
+
+# The output of the CountVectorizer is a sparse matrix XTrainVec, XValVec, and XTestVec, which are then used
+# to train the logistic regression model and evaluate its performance on validation and test datasets.
+
 XTrainVec = vectorizer.transform(XTrain)  # transforming XTrain
 XValVec = vectorizer.transform(XVal)  # transforming XVal
 XTestVec = vectorizer.transform(XTest)  # transforming XTest

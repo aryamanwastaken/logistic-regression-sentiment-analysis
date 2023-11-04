@@ -212,6 +212,44 @@ yPred = bestModel.predict(XTestVec)  # predicting yPred
 
 print(classification_report(yTest, bestModel.predict(XTestVec)))    # printing classification report
 
+# CROSS VALIDATION, FEATURE IMPORTANCE ANALYSIS AND ERROR ANALYSIS
+
+# a.
+cross_validation = {
+    "2": cv_score(LogisticRegression(random_state=42), XTrainVec, yTrain, cv=2).mean(), # 2-fold CV
+    "10": cv_score(LogisticRegression(random_state=42), XTrainVec, yTrain, cv=10).mean(), # 10-fold CV
+    "20": cv_score(LogisticRegression(random_state=42), XTrainVec, yTrain, cv=20).mean() # 20-fold CV
+}
+
+# Print the CV scores
+for fold, score in cross_validation.items(): # .items() returns key-value pairs
+    print(f"{fold} CV Score: {score}")
+
+# b.
+model = LogisticRegression(random_state=42).fit(XTrainVec, yTrain)  # train the model
+
+# Feature importance analysis for multi-class classification
+feature_names = vectorizer.get_feature_names_out() # get the feature names
+for class_index in range(model.coef_.shape[0]): # iterate over the classes
+    coefficients = model.coef_[class_index]  # get the coefficients
+    sorted_indices = np.argsort(coefficients)  # sort the coefficients
+    top_features = feature_names[sorted_indices[-10:]]  # get the top 10 coefficients
+    bottom_features = feature_names[sorted_indices[:10]]  # get the bottom 10 coefficients
+    print(f"Class {class_index} - Top important features:", top_features)  # print the top 10 coefficients
+    print(f"Class {class_index} - Bottom important features:", bottom_features)  # print the bottom 10 coefficients
+  
+# c. Error analysis
+y_pred = model.predict(XTestVec)  # predict the test data
+mismatch_indices = np.where(y_pred != yTest)[0]  # get the mismatch indices
+for i in mismatch_indices[:10]:  # iterate over the first 10 mismatch indices
+    features = XTestVec[i]   # get the feature vectors
+    predictions = y_pred[i]  # get the predicted class label
+    ground_truth = yTest.iloc[i]  # get the ground truth class label
+    print(f"Data-point {i}:")  # print the data-point index
+    print("Feature vectors:", features)  # print the feature vectors
+    print("Predicted class label:", predictions)  # print the predicted class label
+    print("Ground Truth class label:", ground_truth)  # print the ground truth class label
+    print()
 
 ######################################################################################################
 # EXTRA
